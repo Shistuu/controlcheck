@@ -1,0 +1,38 @@
+<% result = @remediation.result %>
+<h1>Fix steps: <%= result.control.name %></h1>
+<p>
+  <%= link_to "Back to result", result_path(result) %> ·
+  status: <strong><%= @remediation.status %></strong>
+</p>
+
+<% if @remediation.draft? %>
+  <%= form_with url: approve_remediation_path(@remediation), method: :patch,
+        data: { controller: "remediation-review" } do |f| %>
+    <p>
+      <%= f.label :final_text, "Edit the drafted steps before approving" %><br>
+      <%= f.text_area :final_text, value: params[:final_text] || @remediation.draft_text, rows: 18,
+            data: { remediation_review_target: "text", action: "input->remediation-review#update" } %>
+      <span class="muted" data-remediation-review-target="counter"></span>
+    </p>
+    <p>
+      <%= f.label :approved_by, "Reviewer name" %><br>
+      <%= f.text_field :approved_by, value: params[:approved_by],
+            data: { remediation_review_target: "reviewer", action: "input->remediation-review#update" } %>
+    </p>
+    <div class="actions">
+      <%= f.submit "Approve", data: { remediation_review_target: "approve" } %>
+    </div>
+  <% end %>
+  <div class="actions">
+    <%= button_to "Reject", reject_remediation_path(@remediation), method: :patch,
+          form: { data: { turbo_confirm: "Reject this draft?" } } %>
+  </div>
+<% else %>
+  <% if @remediation.approved? %>
+    <p>Approved by <%= @remediation.approved_by %> on <%= l @remediation.approved_at, format: :long %>.</p>
+    <pre><%= @remediation.final_text %></pre>
+  <% else %>
+    <p>This draft was rejected.</p>
+    <pre><%= @remediation.draft_text %></pre>
+  <% end %>
+<% end %>

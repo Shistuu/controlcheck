@@ -1,0 +1,28 @@
+<h1><%= @result.control.name %></h1>
+
+<p>
+  <%= link_to @organization.name, @organization %> ·
+  run started <%= l @result.check_run.started_at, format: :long %> ·
+  <span class="<%= @result.passed? ? "pass" : "fail" %>"><%= @result.passed? ? "Pass" : "Fail" %></span>
+</p>
+
+<h2>Data the check looked at</h2>
+<pre><%= JSON.pretty_generate(@result.details) %></pre>
+
+<% if @result.failed? %>
+  <h2>Remediation</h2>
+  <%= button_to "Draft fix steps", result_remediations_path(@result) %>
+
+  <% if @result.remediations.any? %>
+    <table>
+      <tr><th>Created</th><th>Status</th><th></th></tr>
+      <% @result.remediations.order(created_at: :desc).each do |remediation| %>
+        <tr>
+          <td><%= l remediation.created_at, format: :short %></td>
+          <td><%= remediation.status %><% if remediation.approved? %> by <%= remediation.approved_by %><% end %></td>
+          <td><%= link_to(remediation.draft? ? "Review" : "View", edit_remediation_path(remediation)) %></td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+<% end %>
