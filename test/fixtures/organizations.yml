@@ -1,0 +1,4 @@
+acme:
+  name: Acme
+  github_login: acme
+  public_repo_allowlist: "{docs}"
