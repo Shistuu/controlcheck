@@ -1,0 +1,18 @@
+<%= form_with model: organization do |f| %>
+  <% if organization.errors.any? %>
+    <p class="flash alert"><%= organization.errors.full_messages.to_sentence %></p>
+  <% end %>
+  <p>
+    <%= f.label :name %><br>
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :github_login, "GitHub org login" %><br>
+    <%= f.text_field :github_login %>
+  </p>
+  <p>
+    <%= f.label :public_repo_allowlist_text, "Repos allowed to be public (comma separated)" %><br>
+    <%= f.text_field :public_repo_allowlist_text, size: 60 %>
+  </p>
+  <%= f.submit %>
+<% end %>

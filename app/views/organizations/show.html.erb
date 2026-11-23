@@ -1,0 +1,39 @@
+<h1><%= @organization.name %> <span class="muted">(<%= @organization.github_login %>)</span></h1>
+
+<p class="muted">
+  <% if @last_run %>
+    Last run started <%= l @last_run.started_at, format: :long %>.
+  <% else %>
+    No runs yet.
+  <% end %>
+  <%= link_to "Edit", edit_organization_path(@organization) %> ·
+  <%= link_to "Evidence", evidence_organization_path(@organization) %>
+</p>
+
+<%= button_to "Run checks now", organization_check_runs_path(@organization) %>
+
+<table>
+  <tr><th>Control</th><th>Status</th><th>Failing since</th><th></th></tr>
+  <% @controls.each do |control| %>
+    <% result = @organization.latest_result_for(control) %>
+    <tr>
+      <td>
+        <%= control.name %><br>
+        <span class="muted"><%= control.description %></span>
+      </td>
+      <% if result.nil? %>
+        <td class="muted">not run</td>
+        <td></td>
+        <td></td>
+      <% else %>
+        <td class="<%= result.passed? ? "pass" : "fail" %>"><%= result.passed? ? "Pass" : "Fail" %></td>
+        <td>
+          <% if (since = @organization.failing_since(control)) %>
+            failing since <%= l since.to_date, format: :long %>
+          <% end %>
+        </td>
+        <td><%= link_to "Details", result_path(result) %></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>

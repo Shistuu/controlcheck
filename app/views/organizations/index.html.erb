@@ -1,0 +1,17 @@
+<h1>Organizations</h1>
+
+<% if @organizations.any? %>
+  <table>
+    <tr><th>Name</th><th>GitHub login</th></tr>
+    <% @organizations.each do |org| %>
+      <tr>
+        <td><%= link_to org.name, org %></td>
+        <td><%= org.github_login %></td>
+      </tr>
+    <% end %>
+  </table>
+<% else %>
+  <p>No organizations yet.</p>
+<% end %>
+
+<p><%= link_to "Add organization", new_organization_path %></p>
