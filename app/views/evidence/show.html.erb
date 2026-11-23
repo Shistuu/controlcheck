@@ -1,0 +1,38 @@
+<h1>Evidence: <%= @organization.name %></h1>
+<p><%= link_to "Back to organization", @organization %></p>
+
+<h2>Approved remediations</h2>
+<% if @remediations.any? %>
+  <% @remediations.each do |remediation| %>
+    <section class="remediation">
+      <h3><%= remediation.result.control.name %></h3>
+      <p class="muted">
+        Approved by <%= remediation.approved_by %> on <%= l remediation.approved_at, format: :long %>
+      </p>
+      <pre><%= remediation.final_text %></pre>
+    </section>
+  <% end %>
+<% else %>
+  <p>No approved remediations yet.</p>
+<% end %>
+
+<h2>Check results</h2>
+<% if @runs.any? %>
+  <table>
+    <tr><th>Run started</th><th>Control</th><th>Result</th></tr>
+    <% @runs.each do |run| %>
+      <% run.results.sort_by(&:control_id).each do |result| %>
+        <tr>
+          <td><%= l run.started_at, format: :short %></td>
+          <td><%= result.control.name %></td>
+          <td>
+            <span class="<%= result.passed? ? "pass" : "fail" %>"><%= result.passed? ? "Pass" : "Fail" %></span>
+            <%= link_to "data", result_path(result), class: "muted" %>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+<% else %>
+  <p>No runs yet.</p>
+<% end %>
